@@ -1,13 +1,49 @@
 ---
+const title = 'Tasks';
 ---
 
 <html lang="es">
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Hello Tauri + Astro</title>
+    <title>{title}</title>
   </head>
   <body>
-    <h1>Hello, Tauri + Astro!</h1>
+    <main>
+      <h1>{title}</h1>
+      <form id="new-task">
+        <input id="title" name="title" placeholder="Nueva tarea" required />
+        <button type="submit">Agregar</button>
+      </form>
+      <ul id="tasks"></ul>
+    </main>
+
+    <script is:inline>
+      const { invoke } = window.__TAURI__.core;
+
+      const refresh = async () => {
+        const tasks = await invoke('list_tasks');
+        document.getElementById('tasks').innerHTML = tasks
+          .map((t) => `<li><span>${t.title}</span> <button data-id="${t.id}">Eliminar</button></li>`)
+          .join('');
+      };
+
+      document.getElementById('new-task').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const input = document.getElementById('title');
+        await invoke('add_task', { title: input.value });
+        input.value = '';
+        await refresh();
+      });
+
+      document.getElementById('tasks').addEventListener('click', async (e) => {
+        const btn = e.target.closest('button[data-id]');
+        if (!btn) return;
+        await invoke('delete_task', { id: Number(btn.dataset.id) });
+        await refresh();
+      });
+
+      refresh();
+    </script>
   </body>
 </html>
