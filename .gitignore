@@ -1,0 +1,28 @@
+# --- Logs ---
+logs
+*.log
+npm-debug.log*
+pnpm-debug.log*
+
+# --- Node / pnpm ---
+node_modules
+
+# --- Build output (Astro + Tauri comparten dist/) ---
+dist
+.astro/
+
+# --- Env ---
+.env
+.env.*
+!.env.example
+
+# --- OS ---
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# --- IDEs ---
+.vscode/*
+!.vscode/extensions.json
+.idea
+*.swp
